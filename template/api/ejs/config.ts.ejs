@@ -19,6 +19,9 @@ export default {
   },
   formatHeader: <T extends object>(headers: T, { method, data, otherConfig }): T => {
     // 可以在这里写一些业务逻辑，比如增加 token 等，或者 Content-Type: application/json 等
+    if (method.toLocaleLowerCase() === 'post') {
+      return { 'content-type': 'application/json', ...headers };
+    }
     return { ...headers };
   },
   getStoreGlobal: (key: string, data: { [name: string]: any } = {}): false | Promise<any> => {
