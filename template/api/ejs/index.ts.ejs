@@ -48,7 +48,7 @@ function formatApiList<T extends object>(obj: T): Partial2<T> {
       if (!method && ['add', 'edit', 'delete', 'update', 'remove', 'sign', 'login'].includes(key)) {
         method = 'POST';
       } else {
-        method = method || "GET";
+        method = defaultMethod || "GET";
       }
       method = method.toLocaleUpperCase();
 
