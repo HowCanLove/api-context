@@ -14,7 +14,6 @@ module.exports = ({ context, applyMethod }) => {
   const ejsPath = (str = "", type = "api") => {
     return path.join(__dirname, `./template/${type}/ejs/${str}.ts.ejs`);
   };
-  console.log("AC : ejsPath : ejsPath", path.join(rootDir, "./src/api/"));
 
   // 判断api文件夹是否存在，不存在就会创建
   if (!fs.existsSync(path.join(rootDir, "./src/api/"))) {
