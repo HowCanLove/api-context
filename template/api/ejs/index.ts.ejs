@@ -1,0 +1,119 @@
+import { request } from '<%-rootDir%>/.ice';
+import apiObj from '<%-rootDir%>/src/api';
+import config from '<%-rootDir%>/src/api/config';
+
+const { beforeResult, formatHeader, getStoreGlobal, saveStoreGlobal } = config || {};
+   
+interface apiItem {
+  url: string;
+  method?: string;
+  headers?: {
+    [name: string]: any; 
+  };
+  data?: {
+    [name: string]: any;
+  };
+  formatResult?: Function;
+}
+interface ApiObj {
+  [name: string]: string | ApiObj | apiItem;
+}
+
+type apiFunction = (params?: { [name: string]: any }) => Promise<any>;
+
+type Partial2<T> = { [P in keyof T]: Partial3<T[P]> };
+type Partial3<T> = T extends string ? apiFunction : T extends apiItem ? apiFunction : Partial2<T>;
+
+function formatApiList<T extends object>(obj: T): Partial2<T> {
+  const formatApi = {} as Partial2<T>;
+  for (const key in obj) {
+    const item = obj[key] as unknown as ApiObj;
+    if (typeof item === 'string' || typeof item.url === 'string') {
+      let apiConfig: apiItem;
+      if (typeof item === 'string') {
+        apiConfig = { url: item };
+      } else {
+        apiConfig = item as unknown as apiItem;
+      }
+       
+      const {
+        url,
+        formatResult = (_) => _,
+        data: defaultData = {},
+        headers: defaultHeaders,
+        method: defaultMethod,
+        ...otherConfig
+      } = apiConfig;
+      let method;
+      if (!method && ['add', 'edit', 'delete', 'update', 'remove', 'sign', 'login'].includes(key)) {
+        method = 'POST';
+      } else {
+        method = method || "GET";
+      }
+      method = method.toLocaleUpperCase();
+
+      Object.assign(formatApi, {
+        [key]: async (params?: { [name: string]: any }): Promise<any> => {
+          params = params || {};
+          Object.keys(params.sort || {}).length > 0 && delete params.sort;
+          const fullData = { ...defaultData, ...params };
+          const { showMessage, __saveInGlobal__, ...data } = fullData;
+
+          if (typeof getStoreGlobal === 'function') {
+            const getTempResult = await getStoreGlobal(key, data);
+            if (getTempResult !== false) {
+              return Promise.resolve(getTempResult);
+            }
+          }
+
+          let requestFun;
+          const headers =
+            typeof formatHeader === 'function'
+              ? formatHeader({
+                  ...defaultHeaders,
+                })
+              : {
+                  ...defaultHeaders,
+                };
+
+          if (method === 'GET') {
+            requestFun = request.get(url, {
+              params: data,
+              headers,
+              ...otherConfig,
+            });
+          } else if (method === 'POST') {
+            requestFun = request.post(url, data, {
+              headers,
+              ...otherConfig,
+            });
+          }
+
+          if (requestFun) {
+            const requestFunResult = requestFun
+              .then(async (res) => {
+                if (typeof beforeResult === 'function') {
+                  return beforeResult(url, res, fullData, method);
+                } else {
+                  return res;
+                }
+              })
+              .then((result) => {
+                const finalResult = formatResult(result);
+                typeof saveStoreGlobal === 'function' && saveStoreGlobal(key, data, finalResult);
+                return finalResult;
+              });
+            return requestFunResult;
+          }
+          throw new Error('请求方式不正确');
+        },
+      });
+    } else {
+      // @ts-ignore
+      formatApi[key] = formatApiList(obj[key]);
+    }
+  }
+  return formatApi;
+}
+
+export default formatApiList(apiObj);
