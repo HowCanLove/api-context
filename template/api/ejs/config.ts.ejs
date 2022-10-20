@@ -1,12 +1,12 @@
 import { history } from 'ice';
 
+const temp = {};
 export default {
   beforeResult: (url, res, fullData, method = 'get') => {
     if (url !== '/admin2/user/login' && res.message === '登录失效') {
       history?.push('/login');
       return false;
     }
-    const { showMessage = true } = fullData;
     return new Promise((resolve, reject) => {
       if (res.success === false) {
         const error = res.message || (method === 'post' ? '提交' : '获取') + '数据失败';
@@ -18,5 +18,14 @@ export default {
   },
   formatHeader: <T extends object>(headers: T): T => {
     return { ...headers };
+  },
+  getStoreGlobal: (key: string, data: { [name: string]: any } = {}): false | Promise<any> => {
+    if (!data?.__saveInGlobal__) return false;
+    return Promise.resolve(temp[key] || false);
+  },
+  saveStoreGlobal: (key: string, data: { [name: string]: any } = {}, finalResult) => {
+    if (data?.__saveInGlobal__) {
+      temp[key] = finalResult;
+    }
   },
 };
