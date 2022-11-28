@@ -58,7 +58,7 @@ module.exports = ({ context, applyMethod }, options) => {
   if (options.host && options.project && options.logstore) {
     // 将生成的 文件 使用 addRenderFile 增加到 .ice/logger 文件夹里
     // 删除原本的logger文件, 原本的logger文件里，不存在 send-sls-logger 字段
-    if (fs.existsSync(getRootPath("plugins/logger/index.ts"))) {
+    if (!fs.existsSync(getRootPath("plugins/logger/index.ts"))) {
       console.log(222);
       // 生成 /template/logger/index.ts 文件
       const logger = fs.readFileSync(ejsPath("index", "logger"), "utf-8");
