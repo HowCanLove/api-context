@@ -60,7 +60,10 @@ module.exports = ({ context, applyMethod }, options) => {
     // 删除原本的logger文件, 原本的logger文件里，不存在 send-sls-logger 字段
     // 生成 /template/logger/index.ts 文件
     const logger = fs.readFileSync(ejsPath("index", "logger"), "utf-8");
-    if (logger.indexOf("send-sls-logger") === -1) {
+    const OldLoggerText = fs.readFileSync(
+      getRootPath("plugins/logger/index.ts")
+    );
+    if (OldLoggerText.indexOf("send-sls-logger") === -1) {
       fs.unlinkSync(getRootPath("plugins/logger/index.ts"));
       fs.writeFileSync(
         path.join(__dirname, "./template/logger/index.ts"),
