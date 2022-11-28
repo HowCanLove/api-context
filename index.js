@@ -64,7 +64,7 @@ module.exports = ({ context, applyMethod }, options) => {
     applyMethod(
       "addRenderFile",
       path.join(__dirname, "./template/logger/index.ts"),
-      getRootPath("logger/index.ts")
+      getRootPath("plugins/logger/index.ts")
     );
 
     // 对外暴露api属性
