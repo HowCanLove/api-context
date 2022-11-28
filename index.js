@@ -57,7 +57,7 @@ module.exports = ({ context, applyMethod }, options) => {
     const logger = fs.readFileSync(ejsPath("index", "logger"), "utf-8");
     fs.writeFileSync(
       path.join(__dirname, "./template/logger/index.ts"),
-      ejs.render(logger, { rootDir })
+      ejs.render(logger, { ...options })
     );
 
     // 将生成的 文件 使用 addRenderFile 增加到 .ice/logger 文件夹里
