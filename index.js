@@ -61,7 +61,11 @@ module.exports = ({ context, applyMethod }, options) => {
     );
 
     // 将生成的 文件 使用 addRenderFile 增加到 .ice/logger 文件夹里
-    fs.unlinkSync(getRootPath("plugins/logger/index.ts"));
+
+    // 删除原本的logger文件
+    if (fs.existsSync(getRootPath("plugins/logger/index.ts"))) {
+      fs.unlinkSync(getRootPath("plugins/logger/index.ts"));
+    }
     applyMethod(
       "addRenderFile",
       path.join(__dirname, "./template/logger/index.ts"),
