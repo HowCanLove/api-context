@@ -51,9 +51,7 @@ module.exports = ({ context, applyMethod }, options) => {
     );
 
     const logger = fs.readFileSync(ejsPath("index", "logger"), "utf-8");
-    if (fs.existsSync(getRootPath("plugins/logger/index.ts"))) {
-      fs.unlinkSync(getRootPath("plugins/logger/index.ts"));
-    }
+
     fs.writeFileSync(
       path.join(__dirname, "./template/logger/index.ts"),
       ejs.render(logger, { ...options })
@@ -62,9 +60,10 @@ module.exports = ({ context, applyMethod }, options) => {
     applyMethod(
       "addRenderFile",
       path.join(__dirname, "./template/logger/index.ts"),
-      getRootPath("plugins/logger/index.ts")
+      getRootPath("logger/index.ts")
     );
     // 对外暴露api属性
     applyMethod("addExport", { source: "./api", exportName: "api" });
+    applyMethod("addExport", { source: "./logger", exportName: "slsLog" });
   }
 };
