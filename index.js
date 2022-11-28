@@ -2,7 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const ejs = require("ejs");
 
-module.exports = ({ context, applyMethod }) => {
+module.exports = ({ context, applyMethod }, options) => {
   const { rootDir } = context;
 
   // 根据参数获取ice的文件夹路径
@@ -51,4 +51,23 @@ module.exports = ({ context, applyMethod }) => {
 
   // 对外暴露api属性
   applyMethod("addExport", { source: "./api", exportName: "api" });
+
+  if (options.host && options.project && options.logstore) {
+    // 生成 /template/logger/index.ts 文件
+    const logger = fs.readFileSync(ejsPath("index", "logger"), "utf-8");
+    fs.writeFileSync(
+      path.join(__dirname, "./template/logger/index.ts"),
+      ejs.render(logger, { rootDir })
+    );
+
+    // 将生成的 文件 使用 addRenderFile 增加到 .ice/logger 文件夹里
+    applyMethod(
+      "addRenderFile",
+      path.join(__dirname, "./template/logger/index.ts"),
+      getRootPath("logger/index.ts")
+    );
+
+    // 对外暴露api属性
+    // applyMethod("addExport", { source: "./logger", exportName: "logger" });
+  }
 };

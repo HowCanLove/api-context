@@ -1,0 +1,11 @@
+import logger from 'send-sls-logger';
+
+logger.init({
+  options: {
+    host: '<%-host%>', // 所在地域的服务入口。例如cn-hangzhou.log.aliyuncs.com
+    project: '<%-project%>', // Project名称。
+    logstore: '<%-logstore%>', // Logstore名称。
+  },
+});
+
+export default logger;
