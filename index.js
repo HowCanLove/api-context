@@ -53,18 +53,18 @@ module.exports = ({ context, applyMethod }, options) => {
     // 对外暴露api属性
     applyMethod("addExport", { source: "./api", exportName: "api" });
 
-    const logger = fs.readFileSync(ejsPath("index", "logger"), "utf-8");
+    // const logger = fs.readFileSync(ejsPath("index", "logger"), "utf-8");
 
-    fs.writeFileSync(
-      path.join(__dirname, "./template/logger/index.ts"),
-      ejs.render(logger, { ...options })
-    );
+    // fs.writeFileSync(
+    //   path.join(__dirname, "./template/logger/index.ts"),
+    //   ejs.render(logger, { ...options })
+    // );
 
-    applyMethod(
-      "addRenderFile",
-      path.join(__dirname, "./template/logger/index.ts"),
-      getRootPath("logger/index.ts")
-    );
-    applyMethod("addExport", { source: "./logger", exportName: "slsLog" });
+    // applyMethod(
+    //   "addRenderFile",
+    //   path.join(__dirname, "./template/logger/index.ts"),
+    //   getRootPath("logger/index.ts")
+    // );
+    // applyMethod("addExport", { source: "./logger", exportName: "slsLog" });
   }
 };
