@@ -50,6 +50,9 @@ module.exports = ({ context, applyMethod }, options) => {
       getRootPath("api/index.ts")
     );
 
+    // 对外暴露api属性
+    applyMethod("addExport", { source: "./api", exportName: "api" });
+
     const logger = fs.readFileSync(ejsPath("index", "logger"), "utf-8");
 
     fs.writeFileSync(
@@ -62,8 +65,6 @@ module.exports = ({ context, applyMethod }, options) => {
       path.join(__dirname, "./template/logger/index.ts"),
       getRootPath("logger/index.ts")
     );
-    // 对外暴露api属性
-    applyMethod("addExport", { source: "./api", exportName: "api" });
     applyMethod("addExport", { source: "./logger", exportName: "slsLog" });
   }
 };
