@@ -2,7 +2,7 @@ import { history } from 'ice';
 
 const temp = {};
 export default {
-  beforeResult: (url, res, fullData, method = 'get') => {
+  beforeResult: (url, {res, fullData, method = 'get'}) => {
     if (url !== '/admin2/user/login' && res.message === '登录失效') {
       history?.push('/login');
       return false;

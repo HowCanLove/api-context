@@ -2,7 +2,7 @@ import { request } from '<%-rootDir%>/.ice';
 import apiObj from '<%-rootDir%>/src/api';
 import config from '<%-rootDir%>/src/api/config';
 
-const { beforeResult, formatHeader, getStoreGlobal, saveStoreGlobal } = config || {};
+const { beforeResult, formatHeader, getStoreGlobal, saveStoreGlobal, errorFun } = config || {};
    
 interface apiItem {
   url: string;
@@ -93,7 +93,7 @@ function formatApiList<T extends object>(obj: T): Partial2<T> {
             const requestFunResult = requestFun
               .then(async (res) => {
                 if (typeof beforeResult === 'function') {
-                  return beforeResult(url, res, fullData, method);
+                  return beforeResult(url, {res, fullData, method});
                 } else {
                   return res;
                 }
@@ -102,7 +102,10 @@ function formatApiList<T extends object>(obj: T): Partial2<T> {
                 const finalResult = formatResult(result);
                 typeof saveStoreGlobal === 'function' && saveStoreGlobal(key, data, finalResult);
                 return finalResult;
-              });
+              }).catch((err) => {
+                typeof errorFun && errorFun(err, {url, res, fullData, method})
+                return Promise.reject(err);
+              });;
             return requestFunResult;
           }
           throw new Error('请求方式不正确');
