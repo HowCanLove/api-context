@@ -103,7 +103,7 @@ function formatApiList<T extends object>(obj: T): Partial2<T> {
                 typeof saveStoreGlobal === 'function' && saveStoreGlobal(key, data, finalResult);
                 return finalResult;
               }).catch((err) => {
-                typeof errorFun && errorFun(err, {url, res, fullData, method})
+                typeof errorFun && errorFun(err, {url, fullData, method})
                 return Promise.reject(err);
               });;
             return requestFunResult;
