@@ -1,3 +1,4 @@
+// @ts-nocheck 取消忽略全文
 import { request } from "<%-rootDir%>/.ice";
 import apiObj from "<%-rootDir%>/src/api";
 
