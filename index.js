@@ -57,7 +57,7 @@ module.exports = ({ context, applyMethod }, options) => {
 		applyMethod("addExport", { source: "./api", exportName: "api" });
 	}
 
-	if (!fs.existsSync(getRootPath("logger/index.ts"))) {
+	if (!fs.existsSync(getRootPath("logger/index.ts")) && options) {
 		const hasLogger = Object.keys(options).length > 0;
 		if (hasLogger) {
 			const logger = fs.readFileSync(ejsPath("index", "logger"), "utf-8");
